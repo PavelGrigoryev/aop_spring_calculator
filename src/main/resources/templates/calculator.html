@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div>
+            <h1>Hello dude! Enter two numbers and operation: add, sub, mul, div</h1>
+        </div>
+        <form th:action="@{calculate}" th:object="${operation}" method="post">
+            <div class="form-group">
+                <label for="firstNum"> First num :</label> <input type="text" class="form-control" id="firstNum"
+                                                                  placeholder="Enter first number"
+                                                                  name="firstNum" th:field="*{firstNum}"/>
+                <p th:if="${#fields.hasErrors('firstNum')}" th:errors="*{firstNum}"></p>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="secondNum"> Second num :</label> <input type="text" class="form-control" id="secondNum"
+                                                                    placeholder="Enter second number"
+                                                                    name="secondNum" th:field="*{secondNum}"/>
+                <p th:if="${#fields.hasErrors('secondNum')}" th:errors="*{secondNum}"></p>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="operation"> Operation :</label> <input type="text" class="form-control" id="operation"
+                                                                   placeholder="Enter operation"
+                                                                   name="operation" th:field="*{operation}"/>
+                <p th:if="${#fields.hasErrors('operation')}" th:errors="*{operation}"></p>
+            </div>
+            <br>
+            <div><input type="submit" value="Calculate"/></div>
+            <br>
+            <a th:if="${operation.getFirstNum() != 0 && operation.getSecondNum() != 0 && operation.getOperation() != null}">
+                <p th:text="'Result: '+${operation.getResult()}"></p>
+            </a>
+        </form>
+    </div>
+</div>
+</body>
+</html>
