@@ -24,19 +24,28 @@ public class CalculatorService {
         if (Double.parseDouble(secondNum) != 0) {
             return Double.parseDouble(firstNum) / Double.parseDouble(secondNum);
         } else {
-            throw new DivisionByZeroException("you can't divide by zero");
+            throw new DivisionByZeroException("You can't divide by zero");
         }
     }
 
-    public void getResult(Operation operation) {
+    public Operation getResult(Operation operation) {
         switch (operation.getOperation()) {
-            case "add" -> operation.setResult(addition(operation.getFirstNum(), operation.getSecondNum()));
-
-            case "sub" -> operation.setResult(subtraction(operation.getFirstNum(), operation.getSecondNum()));
-
-            case "mul" -> operation.setResult(multiplication(operation.getFirstNum(), operation.getSecondNum()));
-
-            case "div" -> operation.setResult(division(operation.getFirstNum(), operation.getSecondNum()));
+            case "add" -> {
+                operation.setResult(addition(operation.getFirstNum(), operation.getSecondNum()));
+                return operation;
+            }
+            case "sub" -> {
+                operation.setResult(subtraction(operation.getFirstNum(), operation.getSecondNum()));
+                return operation;
+            }
+            case "mul" -> {
+                operation.setResult(multiplication(operation.getFirstNum(), operation.getSecondNum()));
+                return operation;
+            }
+            case "div" -> {
+                operation.setResult(division(operation.getFirstNum(), operation.getSecondNum()));
+                return operation;
+            }
 
             default ->
                     throw new OperationNotFoundException("There is no such operation. There is only: add, sub, mul, div");

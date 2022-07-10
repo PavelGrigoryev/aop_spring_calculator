@@ -2,11 +2,8 @@ package com.pavel.aop_spring_calculator.aspect;
 
 import com.pavel.aop_spring_calculator.entity.Operation;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
@@ -16,16 +13,20 @@ import java.util.Arrays;
 @Aspect
 @Slf4j
 public class LoggingAspect {
+    @AfterThrowing(pointcut = "com.pavel.aop_spring_calculator.aspect.Pointcuts.getResultMethod()", throwing = "e")
+    public void afterThrowingGetResultMethodAdvice(RuntimeException e) {
+        log.error(e.getMessage(), e);
+    }
 
-    @Before("com.pavel.aop_spring_calculator.aspect.Pointcuts.getResultMethod()")
-    public void beforeGetResultMethodAdvice(JoinPoint joinPoint) {
+    @Around("com.pavel.aop_spring_calculator.aspect.Pointcuts.getResultMethod()")
+    public Object aroundGetResultMethodAdvice(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         log.info("Мы входим в метод getResult()");
 
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
         log.info("methodSignature = " + methodSignature);
 
         if (methodSignature.getName().equals("getResult")) {
-            Object[] arguments = joinPoint.getArgs();
+            Object[] arguments = proceedingJoinPoint.getArgs();
             Arrays.stream(arguments).forEach(obj -> {
                 if (obj instanceof Operation operation) {
                     log.info("Первая цифра - " + operation.getFirstNum() + ", Вторая цифра - "
@@ -35,17 +36,14 @@ public class LoggingAspect {
                 }
             });
         }
-    }
 
-    @After("com.pavel.aop_spring_calculator.aspect.Pointcuts.getResultMethod()")
-    public void afterGetResultMethodAdvice(JoinPoint joinPoint) {
+        Object target = proceedingJoinPoint.proceed();
+
         log.info("Мы вышли из метода getResult()");
-
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         log.info("methodSignature = " + methodSignature);
 
         if (methodSignature.getName().equals("getResult")) {
-            Object[] arguments = joinPoint.getArgs();
+            Object[] arguments = proceedingJoinPoint.getArgs();
             Arrays.stream(arguments).forEach(obj -> {
                 if (obj instanceof Operation operation) {
                     log.info("Первая цифра - " + operation.getFirstNum() + ", Вторая цифра - "
@@ -56,12 +54,7 @@ public class LoggingAspect {
                 }
             });
         }
-
         log.info("Я конечно такой себе АОПешник...");
-    }
-
-    @AfterThrowing(pointcut = "com.pavel.aop_spring_calculator.aspect.Pointcuts.getResultMethod()", throwing = "e")
-    public void afterThrowingGetResultMethodAdvice(RuntimeException e) {
-        log.error(e.getMessage(), e);
+        return target;
     }
 }
