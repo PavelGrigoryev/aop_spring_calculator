@@ -4,6 +4,7 @@ import com.pavel.aop_spring_calculator.entity.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -17,7 +18,7 @@ import java.util.Arrays;
 public class LoggingAspect {
 
     @Before("com.pavel.aop_spring_calculator.aspect.Pointcuts.getResultMethod()")
-    public void beforeGetResultMethod(JoinPoint joinPoint) {
+    public void beforeGetResultMethodAdvice(JoinPoint joinPoint) {
         log.info("Мы входим в метод getResult()");
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
@@ -37,7 +38,7 @@ public class LoggingAspect {
     }
 
     @After("com.pavel.aop_spring_calculator.aspect.Pointcuts.getResultMethod()")
-    public void afterGetResultMethod(JoinPoint joinPoint) {
+    public void afterGetResultMethodAdvice(JoinPoint joinPoint) {
         log.info("Мы вышли из метода getResult()");
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
@@ -57,5 +58,10 @@ public class LoggingAspect {
         }
 
         log.info("Я конечно такой себе АОПешник...");
+    }
+
+    @AfterThrowing(pointcut = "com.pavel.aop_spring_calculator.aspect.Pointcuts.getResultMethod()", throwing = "e")
+    public void afterThrowingGetResultMethodAdvice(RuntimeException e) {
+        log.error(e.getMessage(), e);
     }
 }
