@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -12,7 +14,7 @@ import java.util.Arrays;
 @Component
 @Aspect
 @Slf4j
-public class LoggingAspect {
+public class LoggingAspect implements HealthIndicator {
     @AfterThrowing(pointcut = "com.pavel.aop_spring_calculator.aspect.Pointcuts.getResultMethod()", throwing = "e")
     public void afterThrowingGetResultMethodAdvice(RuntimeException e) {
         log.error(e.getMessage(), e);
@@ -56,5 +58,11 @@ public class LoggingAspect {
         }
         log.info("Я конечно такой себе АОПешник...");
         return target;
+    }
+
+    @Override
+    public Health health() {
+        String loggingAspect = "Logging Aspect";
+        return Health.up().withDetail(loggingAspect, "Логирующий аспект работает").build();
     }
 }
