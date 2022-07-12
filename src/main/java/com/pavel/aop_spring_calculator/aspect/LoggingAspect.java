@@ -5,16 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.Arrays;
 
 @Component
 @Aspect
 @Slf4j
 public class LoggingAspect implements HealthIndicator {
+    private final String path;
+
+    public LoggingAspect(@Value("${aspect.path:/Temp}") String path) {
+        this.path = path;
+    }
+
     @AfterThrowing(pointcut = "com.pavel.aop_spring_calculator.aspect.Pointcuts.getResultMethod()", throwing = "e")
     public void afterThrowingGetResultMethodAdvice(RuntimeException e) {
         log.error(e.getMessage(), e);
@@ -62,7 +70,19 @@ public class LoggingAspect implements HealthIndicator {
 
     @Override
     public Health health() {
-        String loggingAspect = "Logging Aspect";
-        return Health.up().withDetail(loggingAspect, "Логирующий аспект работает").build();
+       try {
+           File file = new File(path);
+           if (file.exists()) {
+               if (file.canWrite()) {
+                   return Health.status("У нас всё зае**сь!").build();
+               } else {
+                   return Health.status("Всё упало!").build();
+               }
+           } else {
+               return Health.status("Всё к **ям пошло!").build();
+           }
+       } catch (Exception ex) {
+           return Health.down(ex).build();
+       }
     }
 }
