@@ -1,6 +1,6 @@
 # Spring AOP Calculator
 ## Author: [Grigoryev Pavel](https://github.com/PavelGrigoryev)
-# ![Preview](https://github.com/PavelGrigoryev/aop_spring_calculator/blob/master/src/main/resources/static/calc.png)
+# ![Preview](src/main/resources/static/calc.png)
 
 what I used:
 * [Gradle](https://docs.gradle.org)
